@@ -1,6 +1,6 @@
 ---
-title: Half a decade of Property based testing at Equinor
-author: Eivind Jahren
+Title: Half a decade of Property based testing at Equinor
+Author: Eivind Jahren
 ...
 
 # This is a slide
