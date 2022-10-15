@@ -25,12 +25,19 @@ patat:
 # What is fuzzing
 
 ```bash
-for file in `ls`
+python3 generate_random_text.py
+```
+---
+
+---------
+
+```bash
+for ((i=1; i < 10; i++))
 do
-echo "$file"
+python3 generate_random_text.py > test.yml
+python3 pretty_print_yaml.py test.yml pretty.yml
 done
 ```
-
 ---
 
 # Fuzzing highlights:
@@ -170,4 +177,28 @@ def test_divisors_is_inverse_of_product(a):
 def test_divisors_are_prime(a, i):
     result = divisors(a)
     assert is_prime(result[i % len(result)])
+```
+
+----
+
+# Do I really need hypothesis? Why not just rand and loop?
+
+* Killer feature: shrinking
+* Reproducing failures
+* Tuning the number/size of examples
+* CI logs
+* Complicated data
+
+----
+
+# Shrinking
+
+```python
+def average(numbers):
+    return sum(numbers) / len(numbers)
+
+
+@given(st.lists(st.floats(), min_size=1))
+def test_that_average_does_not_exceed_max(numbers):
+    assert max(numbers) >= average(numbers)
 ```
