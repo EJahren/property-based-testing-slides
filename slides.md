@@ -27,7 +27,6 @@ patat:
 ```bash
 python3 generate_random_text.py
 ```
----
 
 ---------
 
@@ -40,15 +39,40 @@ done
 ```
 ---
 
+# Only sad paths? Let's draw some happy examples...
+
+```bash
+python3 generate_random_yaml.py
+```
+---
+
+```bash
+for ((i=1; i < 5; i++))
+do
+python3 generate_random_yaml.py > test.yml
+python3 pretty_print_yaml.py test.yml pretty.yml
+done
+cat pretty.yml
+```
+------
+
+```bash
+for ((i=1; i < 5; i++))
+do
+python3 generate_random_yaml.py > test.yml
+python3 pretty_print_yaml.py test.yml pretty.yml
+python3 pretty_print_yaml.py pretty.yml pretty2.yml
+diff pretty.yml pretty2.yml
+done
+```
+
+----
+
 # Fuzzing highlights:
 
 * AFL (nginx, man, firefox)
 * Shellshock
 * google/oss-fuzz (sqlite3, ffmpeg, openssl)
-
----
-
-# Only sad paths? Let's draw some happy examples...
 
 ---
 

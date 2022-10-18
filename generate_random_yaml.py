@@ -1,8 +1,8 @@
 import hypothesis.strategies as st
-from pathlib import Path
-import sys
 import warnings
+import yaml
 
+good_text = st.text(alphabet=st.characters(min_codepoint=1, blacklist_characters=["'", '"']))
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    Path(sys.argv[1]).write_text(st.text().example())
+    print(yaml.dump(st.dictionaries(good_text, good_text).example()))
