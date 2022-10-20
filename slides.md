@@ -1,5 +1,5 @@
 ---
-title: Half a decade of Property based testing at Equinor
+title: Half a decade of PBT at Equinor
 author: Eivind Jahren
 patat:
     eval:
@@ -12,7 +12,7 @@ patat:
 
 # In the beginning
 
----
+-------------------------------------------------
 
 # Agenda
 
@@ -20,7 +20,16 @@ patat:
 * Compare property-based testing with other methods
 * Experiences
 
----
+-------------------------------------------------
+
+# What is Property-based testing (PBT) ?
+
+-------------------------------------------------
+
+# Perspective: PBT is just fuzzing for unit tests
+
+-------------------------------------------------
+
 
 # What is fuzzing
 
@@ -28,7 +37,7 @@ patat:
 python3 generate_random_text.py
 ```
 
----------
+--------------------------------------------------
 
 ```bash
 for ((i=1; i < 10; i++))
@@ -37,14 +46,14 @@ python3 generate_random_text.py > test.yml
 python3 pretty_print_yaml.py test.yml pretty.yml
 done
 ```
----
+--------------------------------------------------
 
 # Only sad paths? Let's draw some happy examples...
 
 ```bash
 python3 generate_random_yaml.py
 ```
----
+--------------------------------------------------
 
 ```bash
 for ((i=1; i < 5; i++))
@@ -54,7 +63,7 @@ python3 pretty_print_yaml.py test.yml pretty.yml
 done
 cat pretty.yml
 ```
-------
+--------------------------------------------------
 
 ```bash
 for ((i=1; i < 5; i++))
@@ -66,7 +75,7 @@ diff pretty.yml pretty2.yml
 done
 ```
 
-----
+---------------------------------------------------
 
 # Fuzzing highlights:
 
@@ -74,11 +83,7 @@ done
 * Shellshock
 * google/oss-fuzz (sqlite3, ffmpeg, openssl)
 
----
-
-# Perspective: Property based testing is just fuzzing for unit tests
-
----
+---------------------------------------------------
 
 # An example: Sorting is permuting
 
@@ -96,7 +101,7 @@ def test_sorting_results_in_permutation(list):
         assert element in list
 ```
 
----
+---------------------------------------------------
 
 # Example 2: Sorting orders
 
@@ -111,7 +116,7 @@ def test_sorting_orders(list):
     for i in range(len(sorted_list)-1):
         assert sorted_list[i] <= sorted_list[i+1]
 ```
----
+----------------------------------------------------
 
 # Example 3: Read/Write roundtrip
 
@@ -128,16 +133,44 @@ def test_reading_and_writing_yaml_are_inverses(data):
     assert yaml.load(buffer) == data
 
 ```
----
-
-# Reflection 1: Models of program verification
+-----------------------------------------------------------------
 
 * Functions f and g are right-inverse if for all x:A . f(g(x)) = x
 * Functions f and g are left-inverse if for all x:A . g(f(x)) = x
 * f and g are inverse if they are both right-inverse and left-inverse.
 * yaml.dump and yaml.load are inverse functions.
 
----
+---------------------------------------------------------------
+
+# Perspective: PBT is a gateway drug to Formal Methods
+
+See for instance Frama-C:
+```c
+/*@ requires 0 <= n && \valid(a+(0..n-1));
+    assigns \nothing;
+    ensures \result == -1 ==> (\forall integer i; 0<= i < n ==> a[i] != v);
+    ensures 0 <= \result < n ==> a[\result] == v;
+    ensures -1 <= \result < n;
+ */
+int find(int n, const int a[], int v)
+{
+  int i;
+
+  /*@ loop invariant 0 <= i <= n;
+      loop invariant \forall integer j; 0 <= j < i ==> a[j] != v;
+      loop assigns i;
+      loop variant n - i; */
+  for (i=0; i < n; i++) {
+    if (a[i] == v) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+```
+
+----------------------------------------------------------------
 
 # Design by contract
 
@@ -202,6 +235,10 @@ def test_divisors_are_prime(a, i):
     result = divisors(a)
     assert is_prime(result[i % len(result)])
 ```
+
+----
+
+# Writing your own generators
 
 ----
 
