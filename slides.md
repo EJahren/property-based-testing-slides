@@ -10,6 +10,11 @@ patat:
 
 ---
 
+READY.
+█
+
+-------------------------------------------------
+
 # In the beginning
 
 -------------------------------------------------
@@ -117,6 +122,20 @@ def test_sorting_orders(list):
         assert sorted_list[i] <= sorted_list[i+1]
 ```
 ----------------------------------------------------
+
+# Lets compare with a unit test
+
+```python
+from hypothesis import given
+import hypothesis.strategies as st
+
+def test_sorting():
+    assert sorted([]) == []
+    assert sorted([1]) == [1]
+    assert sorted([1,3,2]) == [1, 2, 3]
+    assert sorted(['b','b','b','a']) == ['a', 'b', 'b', 'b']
+```
+
 
 # Example 3: Read/Write roundtrip
 
@@ -238,7 +257,9 @@ def test_divisors_are_prime(a, i):
 
 ----
 
-# Writing your own generators
+# Writing your own strategies
+
+Note: There is this feature called shrinking...
 
 ----
 
