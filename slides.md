@@ -36,7 +36,7 @@ READY.
 -------------------------------------------------
 
 
-# What is fuzzing
+# What is fuzzing?
 
 ```bash
 python3 generate_random_text.py
