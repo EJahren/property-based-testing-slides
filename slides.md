@@ -97,7 +97,7 @@ done
 from hypothesis import given
 import hypothesis.strategies as st
 
-@given(st.lists(elements=st.integers(min_value=5)))
+@given(st.lists(elements=st.integers()))
 def test_sorting_results_in_permutation(list):
     sorted_list = sorted(list)
     for element in list:
@@ -115,7 +115,7 @@ def test_sorting_results_in_permutation(list):
 from hypothesis import given
 import hypothesis.strategies as st
 
-@given(st.lists(elements=st.integers(min_value=5)))
+@given(st.lists(elements=st.integers()))
 def test_sorting_orders(list):
     sorted_list = sorted(list)
     for i in range(len(sorted_list)-1):
@@ -126,9 +126,6 @@ def test_sorting_orders(list):
 # Lets compare with a unit test
 
 ```python
-from hypothesis import given
-import hypothesis.strategies as st
-
 def test_sorting():
     assert sorted([]) == []
     assert sorted([1]) == [1]
@@ -136,6 +133,54 @@ def test_sorting():
     assert sorted(['b','b','b','a']) == ['a', 'b', 'b', 'b']
 ```
 
+----------------------------------------------------
+
+# Accidental coupling
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass(order=True)
+def Person:
+    lastname: str
+    firstname: str
+
+
+def test_sorting():
+    assert sorted(
+        [Person("Bell", "Bert"), Person("Armstrong", "Amanda")]
+        == [ Person("Armstrong", "Amanda"), Person("Bell", "Bert")]
+    )
+```
+
+what happens if we want to change to:
+
+```python
+@dataclass(order=True)
+def Person:
+    role: Role
+    lastname: str
+    firstname: str
+```
+
+
+---------------------------------------------------
+
+
+```python
+from hypothesis import given
+import hypothesis.strategies as st
+
+persons = ... # We will get to that
+orderables = st.one_of(persons, st.integers(), ...)
+
+@given(st.lists(elements=orderables))
+def test_sorting_orders(list):
+    ...
+```
+
+---------------------------------------------------
 
 # Example 3: Read/Write roundtrip
 
