@@ -242,9 +242,8 @@ int find(int n, const int a[], int v)
 from icontract import ensure, require
 
 
-@require(lambda list: elements_have_total_order(list))
-@ensure(lambda result: is_ordered(result))
-def sorted(list):
+@ensure(lambda result, list, element: list[result] if result !=  -1 else element not in list)
+def find(list, element):
     ...
 ```
 
