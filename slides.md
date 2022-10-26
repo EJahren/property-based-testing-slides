@@ -301,12 +301,6 @@ def test_divisors_are_prime(a, i):
 
 ----
 
-# Writing your own strategies
-
-Note: There is this feature called shrinking...
-
-----
-
 # Do I really need hypothesis? Why not just rand and loop?
 
 * Killer feature: shrinking
@@ -324,7 +318,48 @@ def average(numbers):
     return sum(numbers) / len(numbers)
 
 
-@given(st.lists(st.floats(), min_size=1))
+@given(st.lists(st.floats(allow_nan=False, allow_infinity=False), min_size=1))
 def test_that_average_does_not_exceed_max(numbers):
     assert max(numbers) >= average(numbers)
 ```
+...
+
+Doesn't actually work.
+
+----
+
+
+# Shrinking
+
+```python
+@given(st.lists(st.floats(allow_nan=False, allow_infinity=False), min_size=1))
+def test_that_average_does_not_exceed_max(numbers):
+    success = max(numbers) >= average(numbers)
+    print(numbers, success)
+    assert success
+```
+---------
+```python
+[0.0] True
+[0.0] True
+[1.5, -2.5353189122290976e-107, 1.1754943508222875e-38, -1.1] True
+...
+[-1.192092896e-07, 3.402823466e+38,..., 1.7976931348623157e+308] False # 23 elemens
+[-9007199254740992.0, 2.225073858507e-311] True
+[-2.2250738585072014e-308, ..., 1.7976931348623155e+308] False # 11 elements
+[1.5, -0.99999, 1.401298464324817e-45, 2.2250738585072014e-308] True
+[1.9, ..., 6.103515625e-05] True
+... # 41 more iterations
+[1.7976931348623157e+308, 1.7976931348623157e+308] False
+[1.7976931348623157e+308] True
+... # 20 more iteration attempting 1 and 2 element lists
+[1.7976931348623153e+308, 1.7976931348623157e+308] False
+[1.797693134862315e+308, 1.7976931348623157e+308] False
+[1.7976931348623145e+308, 1.7976931348623157e+308] False
+...# 200 more iterations trying more 1 and 2 element lists
+[9.9792015476736e+291, 1.7976931348623157e+308] False
+```
+
+---------------
+
+Thank you!
