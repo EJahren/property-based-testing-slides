@@ -206,9 +206,92 @@ def test_reading_and_writing_yaml_are_inverses(data):
 
 ---------------------------------------------------------------
 
+
 # Perspective: PBT is a gateway drug to Formal Methods
 
-See for instance Frama-C:
+Recall our sorting properties:
+
+
+
+```python
+from hypothesis import given
+import hypothesis.strategies as st
+
+@given(st.lists(elements=st.integers()))
+def test_sorting_results_in_permutation(list):
+    sorted_list = sorted(list)
+    for element in list:
+        assert element in sorted_list
+    for element in sorted_list:
+        assert element in list
+
+
+@given(st.lists(elements=st.integers()))
+def test_sorting_orders(list):
+    sorted_list = sorted(list)
+    for i in range(len(sorted_list)-1):
+        assert sorted_list[i] <= sorted_list[i+1]
+```
+-------------------------------------------------------------
+# Slightly rewritten:
+
+```python
+def is_permutation(list1, list2):
+    for element in list:
+        assert element in list1
+    for element in sorted_list:
+        assert element in list2
+
+def is_ordered(list):
+    for i in range(len(sorted)-1):
+        assert list[i] <= list[i+1]
+
+
+-------------------------------------------------------------
+
+# Let's see if we can prove it
+
+```python
+def quicksort(a):
+    if len(a) == 0:
+        return []
+    else:
+        p = len(a) // 2
+        l = [i for i in a if i < a[p]]
+        m = [i for i in a if i == a[p]]
+        r = [i for i in a if i > a[p]]
+        return quicksort(l) + m + quicksort(r)
+```
+induction on len(a):
+
+base case:
+
+going back from the base-case, we build `if len(a) = 0 then is_permutation(a,
+[]) and is_ordered([])`, which is true.
+
+induction step:
+
+assuming:
+  * `len(a) > 0`
+  * `p = len(a) // 2`
+  * `l = [i for i in a if i < a[p]]`
+  * `m = [i for i in a if i == a[p]]`
+  * `r = [i for i in a if i > a[p]]`
+  * `is_permutation(l, quicksort(l)) and is_ordered(quicksort(l))`
+  * `is_permutation(r, quicksort(r)) and is_ordered(quicksort(r))`
+
+proof targets:
+  * `len(l) < len(a)`
+  * `len(r) < len(a)`
+  * `is_permutation(a, quicksort(l) + m + quicksort(r)) and is_ordered(quicksort(l) + m + quicksort(r))`
+
+
+----------------------------------------------------------------
+
+# Automating proofs
+
+Using Frama-C:
+
 ```c
 /*@ requires 0 <= n && \valid(a+(0..n-1));
     assigns \nothing;
