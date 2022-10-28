@@ -443,6 +443,62 @@ def test_that_average_does_not_exceed_max(numbers):
 [9.9792015476736e+291, 1.7976931348623157e+308] False
 ```
 
----------------
+-------------------------------------------------------------
+
+# But what if what I am trying to generate is complicated?
+
+...
+
+Enter
+
+...
+
+`hypothesis.strategies.composite`
+
+-------------------------------------------------------------
+
+# Example 4: generator for lines
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Point:
+    x: float
+    y: float
+    z: float
+
+@dataclass
+class Line:
+    start: Point
+    end: Point
+```
+
+--------------------------------------------------------
+
+```python
+import hypothesis.strategies as st
+
+coordinates = st.floats(allow_nan=False, allow_inifinity=False)
+points = st.builds(Point, st.floats(), st.floats())
+lines = st.builds(Line, points, points)
+
+# But what if I want to create some triangles?
+```
+--------------------------------------------------------------
+
+```python
+from hypothesis import assume
+
+@st.composite
+def triangles(draw):
+    point1 = draw(points)
+    point2 = draw(points)
+    point3 = draw(points)
+
+    assume(is_affine_independent([point1, point2, point3]))
+
+    return (Line(point1, point2), Line(point2, point3), Line(point3, point1))
+```
 
 Thank you!
