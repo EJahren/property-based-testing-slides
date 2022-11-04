@@ -21,7 +21,7 @@ executable property-based-testing-talk
   main-is:             Main.hs
   -- other-modules:
   -- other-extensions:
-  build-depends:       base >=4.13 && <4.14,
+  build-depends:       base >=4.13 && <4.16,
                        patat
   -- hs-source-dirs:
   default-language:    Haskell2010
