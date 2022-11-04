@@ -3,6 +3,8 @@ title: Half a decade of PBT at Equinor
 author: Eivind Jahren
 patat:
     eval:
+        python:
+            command: python3
         bash:
             command: bash
 ...
@@ -158,7 +160,7 @@ from dataclasses import dataclass
 
 
 @dataclass(order=True)
-def Person:
+class Person:
     lastname: str
     firstname: str
 
@@ -166,15 +168,23 @@ def Person:
 def test_sorting():
     assert sorted(
         [Person("Bell", "Bert"), Person("Armstrong", "Amanda")]
-        == [ Person("Armstrong", "Amanda"), Person("Bell", "Bert")]
-    )
+    ) == [ Person("Armstrong", "Amanda"), Person("Bell", "Bert")]
+    
 ```
+
+. . .
 
 what happens if we want to change to:
 
 ```python
+from enum import Enum
+from dataclasses import dataclass
+
+class Role(Enum):
+    ...
+
 @dataclass(order=True)
-def Person:
+class Person:
     role: Role
     lastname: str
     firstname: str
@@ -188,8 +198,10 @@ def Person:
 from hypothesis import given
 import hypothesis.strategies as st
 
-persons = st.builds(Persons, st.text(), st.text())
-orderables = st.one_of(persons, st.integers(), ...)
+from person import Person
+
+persons = st.builds(Person, st.text(), st.text())
+orderables = st.one_of(persons, st.integers())
 
 @given(st.lists(elements=orderables))
 def test_sorting_orders(list):
@@ -204,6 +216,8 @@ def test_sorting_orders(list):
 ```python
 import yaml
 from io import StringIO
+from hypothesis import given
+import hypothesis.strategies as st
 
 @given(st.dictionaries(keys=st.text(), values=st.text()))
 def test_reading_and_writing_yaml_are_inverses(data):
@@ -379,7 +393,7 @@ from icontract import ensure, require
     all(is_prime(r) for r in result)
   )
 )
-def divisors(a:int) -> List[int]:
+def divisors(a:int) -> list[int]:
     ...
 ```
 
@@ -394,7 +408,10 @@ wait what?
 ----
 
 ```python
-@given(st.integers().filter(lambda a > 0))
+from hypothesis import given
+import hypothesis.strategies as st
+
+@given(st.integers().filter(lambda a: a > 0))
 def test_divisors_postcondition(a):
     result = divisors(a)
     assert product(result) == a and all(is_prime(r) for r in result)
@@ -402,6 +419,9 @@ def test_divisors_postcondition(a):
 ----
 
 ```python
+from hypothesis import given
+import hypothesis.strategies as st
+
 @given(st.integers(min_value=0))
 def test_divisors_is_inverse_of_product(a):
     assert product(divisors(a)) == a
@@ -411,6 +431,9 @@ def test_divisors_is_inverse_of_product(a):
 ----
 
 ```python
+from hypothesis import given
+import hypothesis.strategies as st
+
 @given(st.integers(min_value=0), st.integers(min_value=0))
 def test_divisors_are_prime(a, i):
     result = divisors(a)
@@ -433,6 +456,9 @@ def test_divisors_are_prime(a, i):
 # Shrinking
 
 ```python
+from hypothesis import given
+import hypothesis.strategies as st
+
 def average(numbers):
     return sum(numbers) / len(numbers)
 
@@ -451,6 +477,9 @@ Doesn't actually work.
 # Shrinking
 
 ```python
+from hypothesis import given
+import hypothesis.strategies as st
+
 @given(st.lists(st.floats(allow_nan=False, allow_infinity=False), min_size=1))
 def test_that_average_does_not_exceed_max(numbers):
     success = max(numbers) >= average(numbers)
@@ -460,7 +489,7 @@ def test_that_average_does_not_exceed_max(numbers):
 
 ------------------------------------------------------
 
-```python
+```
 [0.0] True
 [0.0] True
 [1.5, -2.5353189122290976e-107, 1.1754943508222875e-38, -1.1] True
@@ -519,16 +548,22 @@ class Line:
 
 ```python
 import hypothesis.strategies as st
+from point import Point
+from line import Line
 
-coordinates = st.floats(allow_nan=False, allow_inifinity=False)
-points = st.builds(Point, st.floats(), st.floats())
+coordinates = st.floats(allow_nan=False, allow_infinity=False)
+points = st.builds(Point, coordinates, coordinates)
 lines = st.builds(Line, points, points)
+````
 
-# But what if I want to create some triangles?
-```
+. . .
+
+But what if I want to create some triangles?
+
 --------------------------------------------------------------
 
 ```python
+import hypothesis.strategies as st
 from hypothesis import assume
 
 @st.composite
@@ -541,5 +576,14 @@ def triangles(draw):
 
     return (Line(point1, point2), Line(point2, point3), Line(point3, point1))
 ```
+
+-------------------------------------------
+
+# Where do I find more?
+
+* hypothesis.works 
+* hypothesis.works/articles/quickcheck-in-every-language/
+
+-------------------------------------------
 
 Thank you!
