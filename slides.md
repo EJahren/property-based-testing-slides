@@ -85,12 +85,28 @@ done
 # Fuzzing highlights:
 
 * AFL (nginx, man, firefox)
+* AFL++
 * Shellshock
 * google/oss-fuzz (sqlite3, ffmpeg, openssl)
 
 ---------------------------------------------------
 
-# An example: Sorting is permuting
+# How does this relate to property based testing?
+
+Property based testing is fuzzing for unit tests:
+
+```python
+from hypothesis import given
+import hypothesis.strategies as st
+
+@given(a=st.integers(), b=st.integers())
+def test_sorting_results_in_permutation(a, b):
+    assert a + b == b + a
+```
+
+---------------------------------------------------
+
+# Another Example: Sorting is permuting
 
 
 ```python
@@ -108,7 +124,7 @@ def test_sorting_results_in_permutation(list):
 
 ---------------------------------------------------
 
-# Example 2: Sorting orders
+# Example 3: Sorting orders
 
 
 ```python
@@ -172,7 +188,7 @@ def Person:
 from hypothesis import given
 import hypothesis.strategies as st
 
-persons = ... # We will get to that
+persons = st.builds(Persons, st.text(), st.text())
 orderables = st.one_of(persons, st.integers(), ...)
 
 @given(st.lists(elements=orderables))
@@ -182,7 +198,7 @@ def test_sorting_orders(list):
 
 ---------------------------------------------------
 
-# Example 3: Read/Write roundtrip
+# Example 4: Read/Write roundtrip
 
 
 ```python
@@ -233,6 +249,7 @@ def test_sorting_orders(list):
         assert sorted_list[i] <= sorted_list[i+1]
 ```
 -------------------------------------------------------------
+
 # Slightly rewritten:
 
 ```python
@@ -245,6 +262,7 @@ def is_permutation(list1, list2):
 def is_ordered(list):
     for i in range(len(sorted)-1):
         assert list[i] <= list[i+1]
+```
 
 
 -------------------------------------------------------------
@@ -262,12 +280,29 @@ def quicksort(a):
         r = [i for i in a if i > a[p]]
         return quicksort(l) + m + quicksort(r)
 ```
+
 induction on len(a):
 
 base case:
 
 going back from the base-case, we build `if len(a) = 0 then is_permutation(a,
 []) and is_ordered([])`, which is true.
+
+
+
+---------------------------------------------------------------
+
+```python
+def quicksort(a):
+    if len(a) == 0:
+        return []
+    else:
+        p = len(a) // 2
+        l = [i for i in a if i < a[p]]
+        m = [i for i in a if i == a[p]]
+        r = [i for i in a if i > a[p]]
+        return quicksort(l) + m + quicksort(r)
+```
 
 induction step:
 
@@ -352,7 +387,7 @@ def divisors(a:int) -> List[int]:
 
 (btw, icontract can ghostwrite hypothesis tests)
 
-...
+. . .
 
 wait what?
 
@@ -388,6 +423,7 @@ def test_divisors_are_prime(a, i):
 
 * Killer feature: shrinking
 * Reproducing failures
+* Checking for flakiness
 * Tuning the number/size of examples
 * CI logs
 * Complicated data
@@ -405,11 +441,11 @@ def average(numbers):
 def test_that_average_does_not_exceed_max(numbers):
     assert max(numbers) >= average(numbers)
 ```
-...
+. . .
 
 Doesn't actually work.
 
-----
+-----------------------------------------------------
 
 
 # Shrinking
@@ -421,7 +457,9 @@ def test_that_average_does_not_exceed_max(numbers):
     print(numbers, success)
     assert success
 ```
----------
+
+------------------------------------------------------
+
 ```python
 [0.0] True
 [0.0] True
@@ -432,14 +470,17 @@ def test_that_average_does_not_exceed_max(numbers):
 [-2.2250738585072014e-308, ..., 1.7976931348623155e+308] False # 11 elements
 [1.5, -0.99999, 1.401298464324817e-45, 2.2250738585072014e-308] True
 [1.9, ..., 6.103515625e-05] True
-... # 41 more iterations
+... 
+# 41 more iterations
 [1.7976931348623157e+308, 1.7976931348623157e+308] False
 [1.7976931348623157e+308] True
-... # 20 more iteration attempting 1 and 2 element lists
+...
+# 20 more iteration attempting 1 and 2 element lists
 [1.7976931348623153e+308, 1.7976931348623157e+308] False
 [1.797693134862315e+308, 1.7976931348623157e+308] False
 [1.7976931348623145e+308, 1.7976931348623157e+308] False
-...# 200 more iterations trying more 1 and 2 element lists
+...
+# 200 more iterations trying more 1 and 2 element lists
 [9.9792015476736e+291, 1.7976931348623157e+308] False
 ```
 
@@ -447,17 +488,17 @@ def test_that_average_does_not_exceed_max(numbers):
 
 # But what if what I am trying to generate is complicated?
 
-...
+. . .
 
 Enter
 
-...
+. . .
 
 `hypothesis.strategies.composite`
 
 -------------------------------------------------------------
 
-# Example 4: generator for lines
+# Example 5: generator for lines
 
 ```python
 from dataclasses import dataclass
