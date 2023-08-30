@@ -90,6 +90,117 @@ https://www.henricodolfing.com/2019/06/project-failure-case-study-knight-capital
 > controlled environment. 
 
 https://www.henricodolfing.com/2019/06/project-failure-case-study-knight-capital.html
+
+-------------------------------------------------
+
+# Driverless car crashes due to NaN
+
+> "So during this initialization lap something happened which apparently caused
+> the steering control signal to go to NaN and subsequently the steering locked
+> to the maximum value to the right. When our car was given a permission to
+> drive, the acceleration command went as normal \[...\]"
+
+> "Ironically, [the NaN value] did show up on telemetry monitors, but it showed
+> up along with 1.5k other telemetry values.
+
+> while the team did code in many fail-safes in other areas of the application,
+> it unfortunately only contained data validation on valid numbers
+
+https://www.thedrive.com/news/37366/why-that-autonomous-race-car-crashed-straight-into-a-wall 
+
+-------------------------------------------------
+
+```python
+
+import numpy as np
+
+def validate(a):
+    if a < 0:
+        raise ValueError()
+    if a > 1:
+        raise ValueError()
+
+validate(np.nan)
+```
+
+-------------------------------------------------
+
+# How do we want this to go ideally?
+
+
+> To be a leap year, the year number must be divisible by four – except for
+> years divisble by 100, unless they are also be divisible by 400.
+
+
+-------------------------------------------------
+
+```python
+import pytest
+
+@pytest.mark.parametrize("year", [1939, 1945, 1997, 1999])
+def test_only_years_divisible_by_four_are_leap_years(year):
+    assert not is_leap_year(year)
+```
+
+-------------------------------------------------
+
+```python
+    def is_leap_year(year:int) -> bool:
+        return False
+```
+
+-------------------------------------------------
+
+
+```python
+@pytest.mark.parametrize("year", [1908, 1914, 1918, 1940, 1998, 2004])
+def test_years_divisible_by_4_and_not_by_100_are_leap_years(year):
+    assert is_leap_year(year)
+```
+
+-------------------------------------------------
+
+
+```python
+def is_leap_year(year: int) -> bool:
+    return year % 4 == 0
+```
+
+-------------------------------------------------
+
+
+```python
+@pytest.mark.parametrize("year", [1600, 1700, 1800, 1900, 2000])
+def test_years_divisible_by_100_are_not_leap_years_unless_divisible_by_400(year):
+    assert not is_leap_year(year) or year % 400 == 0
+
+```
+
+-------------------------------------------------
+
+```python
+def is_leap_year(year: int) -> bool:
+    return (year % 4 == 0
+      and year % 100 != 0
+      or year % 400 == 0
+    )
+```
+
+-------------------------------------------------
+
+# mutation testing
+
+* Find code for which mutants are not killed
+* Find tests that never kill mutants
+
+-------------------------------------------------
+
+The leap year tests surprisingly kills a surprisingly large amount of mutants:
+
+* `year % 4 == 0 and year % 231 != 0 or year % 400 == 0`
+* `year % 4 == 0 or year % 100 != 0 and year % 400 == 0`
+* and 10000 more!
+
 -------------------------------------------------
 
 # What is Property-based testing (PBT) ?
@@ -165,7 +276,7 @@ from hypothesis import given
 import hypothesis.strategies as st
 
 @given(a=st.integers(), b=st.integers())
-def test_sorting_results_in_permutation(a, b):
+def test_sum_is_commutative(a, b):
     assert a + b == b + a
 ```
 
@@ -179,12 +290,12 @@ from hypothesis import given
 import hypothesis.strategies as st
 
 @given(st.lists(elements=st.integers()))
-def test_sorting_results_in_permutation(list):
-    sorted_list = sorted(list)
-    for element in list:
+def test_sorting_results_in_permutation(lst):
+    sorted_list = sorted(lst)
+    for element in lst:
         assert element in sorted_list
     for element in sorted_list:
-        assert element in list
+        assert element in lst
 ```
 
 ---------------------------------------------------
@@ -197,8 +308,8 @@ from hypothesis import given
 import hypothesis.strategies as st
 
 @given(st.lists(elements=st.integers()))
-def test_sorting_orders(list):
-    sorted_list = sorted(list)
+def test_sorting_orders(lst):
+    sorted_list = sorted(lst)
     for i in range(len(sorted_list)-1):
         assert sorted_list[i] <= sorted_list[i+1]
 ```
@@ -263,7 +374,7 @@ import hypothesis.strategies as st
 
 from person import Person
 
-persons = st.builds(Person, st.text(), st.text())
+persons = st.builds(Person)
 orderables = st.one_of(persons, st.integers())
 
 @given(st.lists(elements=orderables))
@@ -300,211 +411,6 @@ def test_reading_and_writing_yaml_are_inverses(data):
 ---------------------------------------------------------------
 
 
-# Perspective: PBT is a gateway drug to Formal Methods
-
-Recall our sorting properties:
-
-
-
-```python
-from hypothesis import given
-import hypothesis.strategies as st
-
-@given(st.lists(elements=st.integers()))
-def test_sorting_results_in_permutation(list):
-    sorted_list = sorted(list)
-    for element in list:
-        assert element in sorted_list
-    for element in sorted_list:
-        assert element in list
-
-
-@given(st.lists(elements=st.integers()))
-def test_sorting_orders(list):
-    sorted_list = sorted(list)
-    for i in range(len(sorted_list)-1):
-        assert sorted_list[i] <= sorted_list[i+1]
-```
--------------------------------------------------------------
-
-# Slightly rewritten:
-
-```python
-def is_permutation(list1, list2):
-    for element in list:
-        assert element in list1
-    for element in sorted_list:
-        assert element in list2
-
-def is_ordered(list):
-    for i in range(len(sorted)-1):
-        assert list[i] <= list[i+1]
-```
-
-
--------------------------------------------------------------
-
-# Let's see if we can prove it
-
-```python
-def quicksort(a):
-    if len(a) == 0:
-        return []
-    else:
-        p = len(a) // 2
-        l = [i for i in a if i < a[p]]
-        m = [i for i in a if i == a[p]]
-        r = [i for i in a if i > a[p]]
-        return quicksort(l) + m + quicksort(r)
-```
-
-induction on len(a):
-
-base case:
-
-going back from the base-case, we build `if len(a) = 0 then is_permutation(a,
-[]) and is_ordered([])`, which is true.
-
-
-
----------------------------------------------------------------
-
-```python
-def quicksort(a):
-    if len(a) == 0:
-        return []
-    else:
-        p = len(a) // 2
-        l = [i for i in a if i < a[p]]
-        m = [i for i in a if i == a[p]]
-        r = [i for i in a if i > a[p]]
-        return quicksort(l) + m + quicksort(r)
-```
-
-induction step:
-
-assuming:
-  * `len(a) > 0`
-  * `p = len(a) // 2`
-  * `l = [i for i in a if i < a[p]]`
-  * `m = [i for i in a if i == a[p]]`
-  * `r = [i for i in a if i > a[p]]`
-  * `is_permutation(l, quicksort(l)) and is_ordered(quicksort(l))`
-  * `is_permutation(r, quicksort(r)) and is_ordered(quicksort(r))`
-
-proof targets:
-  * `len(l) < len(a)`
-  * `len(r) < len(a)`
-  * `is_permutation(a, quicksort(l) + m + quicksort(r)) and is_ordered(quicksort(l) + m + quicksort(r))`
-
-
-----------------------------------------------------------------
-
-# Automating proofs
-
-Using Frama-C:
-
-```c
-/*@ requires 0 <= n && \valid(a+(0..n-1));
-    assigns \nothing;
-    ensures \result == -1 ==> (\forall integer i; 0<= i < n ==> a[i] != v);
-    ensures 0 <= \result < n ==> a[\result] == v;
-    ensures -1 <= \result < n;
- */
-int find(int n, const int a[], int v)
-{
-  int i;
-
-  /*@ loop invariant 0 <= i <= n;
-      loop invariant \forall integer j; 0 <= j < i ==> a[j] != v;
-      loop assigns i;
-      loop variant n - i; */
-  for (i=0; i < n; i++) {
-    if (a[i] == v) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-```
-
-----------------------------------------------------------------
-
-# Design by contract
-
-```python
-from icontract import ensure, require
-
-
-@ensure(lambda result, list, element: list[result] if result !=  -1 else element not in list)
-def find(list, element):
-    ...
-```
-
----
-
-# Design by contract: Another example
-
-```python
-from icontract import ensure, require
-
-
-@require(lambda a: a > 0)
-@ensure(lambda result: (
-    product(result) == a and
-    all(is_prime(r) for r in result)
-  )
-)
-def divisors(a:int) -> list[int]:
-    ...
-```
-
----
-
-(btw, icontract can ghostwrite hypothesis tests)
-
-. . .
-
-wait what?
-
-----
-
-```python
-from hypothesis import given
-import hypothesis.strategies as st
-
-@given(st.integers().filter(lambda a: a > 0))
-def test_divisors_postcondition(a):
-    result = divisors(a)
-    assert product(result) == a and all(is_prime(r) for r in result)
-```
-----
-
-```python
-from hypothesis import given
-import hypothesis.strategies as st
-
-@given(st.integers(min_value=0))
-def test_divisors_is_inverse_of_product(a):
-    assert product(divisors(a)) == a
-
-```
-
-----
-
-```python
-from hypothesis import given
-import hypothesis.strategies as st
-
-@given(st.integers(min_value=0), st.integers(min_value=0))
-def test_divisors_are_prime(a, i):
-    result = divisors(a)
-    assert is_prime(result[i % len(result)])
-```
-
-----
-
 # Do I really need hypothesis? Why not just rand and loop?
 
 * Killer feature: shrinking
@@ -514,7 +420,7 @@ def test_divisors_are_prime(a, i):
 * CI logs
 * Complicated data
 
-----
+--------------------------------------------------------------
 
 # Shrinking
 
@@ -522,17 +428,37 @@ def test_divisors_are_prime(a, i):
 from hypothesis import given
 import hypothesis.strategies as st
 
-def average(numbers):
+def average(numbers: list[float]):
     return sum(numbers) / len(numbers)
 
 
+@given(st.lists(st.floats()))
+def test_that_average_does_not_exceed_max(numbers):
+    assert max(numbers) >= average(numbers)
+```
+
+----------------------------------------------------
+
+```python
+@given(st.lists(st.floats(), min_size=1))
+def test_that_average_does_not_exceed_max(numbers):
+    assert max(numbers) >= average(numbers)
+```
+
+-----------------------------------------------------
+
+```python
 @given(st.lists(st.floats(allow_nan=False, allow_infinity=False), min_size=1))
 def test_that_average_does_not_exceed_max(numbers):
     assert max(numbers) >= average(numbers)
 ```
-. . .
 
-Doesn't actually work.
+-----------------------------------------------------
+
+```
+237595.00000000006 = max([237595.00000000006, 237595.00000000006, 237595.00000000006])
+237595.0000000001 = average([237595.00000000006, 237595.00000000006, 237595.00000000006])
+```
 
 -----------------------------------------------------
 
@@ -545,9 +471,8 @@ import hypothesis.strategies as st
 
 @given(st.lists(st.floats(allow_nan=False, allow_infinity=False), min_size=1))
 def test_that_average_does_not_exceed_max(numbers):
-    success = max(numbers) >= average(numbers)
     print(numbers, success)
-    assert success
+    assert max(numbers) >= average(numbers)
 ```
 
 ------------------------------------------------------
