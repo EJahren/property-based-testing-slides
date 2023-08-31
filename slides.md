@@ -169,7 +169,7 @@ def test_sorting():
     assert sorted(
         [Person("Bell", "Bert"), Person("Armstrong", "Amanda")]
     ) == [ Person("Armstrong", "Amanda"), Person("Bell", "Bert")]
-    
+
 ```
 
 . . .
@@ -499,7 +499,7 @@ def test_that_average_does_not_exceed_max(numbers):
 [-2.2250738585072014e-308, ..., 1.7976931348623155e+308] False # 11 elements
 [1.5, -0.99999, 1.401298464324817e-45, 2.2250738585072014e-308] True
 [1.9, ..., 6.103515625e-05] True
-... 
+...
 # 41 more iterations
 [1.7976931348623157e+308, 1.7976931348623157e+308] False
 [1.7976931348623157e+308] True
@@ -581,7 +581,7 @@ def triangles(draw):
 
 # Where do I find more?
 
-* hypothesis.works 
+* hypothesis.works
 * hypothesis.works/articles/quickcheck-in-every-language/
 
 -------------------------------------------
