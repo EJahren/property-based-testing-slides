@@ -52,12 +52,12 @@ READY.
 
 -------------------------------------------------
 
-[](!automatic-unit-test.png)
+> »System testing should be automated as well. A collection of executable
+> programs should be produced and maintained to exercise all parts of the
+> system. The set should be open ended and maintenance utilities should be
+> included
 
--------------------------------------------------
-
-D. J. Panzl, "Automatic Software Test Drivers," in Computer, vol. 11, no. 4,
-pp. 44-50, April 1978, doi: 10.1109/C-M.1978.218138.
+- NATO SOFTWARE ENGINEERING CONFERENCE 1968
 
 -------------------------------------------------
 
@@ -67,11 +67,10 @@ usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf
 
 -------------------------------------------------
 
->A majority of the production failures (77%) can be reproduced by a unit test.
+> A majority of the production failures (77%) can be reproduced by a unit test.
 
 usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf
 
--------------------------------------------------
 
 # Power Peg (Knights Captal Group failure)
 
