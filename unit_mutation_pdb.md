@@ -73,7 +73,7 @@ usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf
 
 > In the week before go-live, a Knight engineer manually deployed the new RLP
 > code in SMARS to its eight servers. However, the engineer made a mistake and
-> did not copy the new code to one of the servers.  
+> did not copy the new code to one of the servers.
 
 https://www.henricodolfing.com/2019/06/project-failure-case-study-knight-capital.html
 
@@ -87,7 +87,7 @@ https://www.henricodolfing.com/2019/06/project-failure-case-study-knight-capital
 > Power Peg was a test program that bought high and sold low; it was
 > specifically designed to move stock prices higher and lower in order to
 > verify the behavior of its other proprietary trading algorithms in a
-> controlled environment. 
+> controlled environment.
 
 https://www.henricodolfing.com/2019/06/project-failure-case-study-knight-capital.html
 
@@ -106,7 +106,7 @@ https://www.henricodolfing.com/2019/06/project-failure-case-study-knight-capital
 > while the team did code in many fail-safes in other areas of the application,
 > it unfortunately only contained data validation on valid numbers
 
-https://www.thedrive.com/news/37366/why-that-autonomous-race-car-crashed-straight-into-a-wall 
+https://www.thedrive.com/news/37366/why-that-autonomous-race-car-crashed-straight-into-a-wall
 
 -------------------------------------------------
 
@@ -343,7 +343,7 @@ def test_sorting():
     assert sorted(
         [Person("Bell", "Bert"), Person("Armstrong", "Amanda")]
     ) == [ Person("Armstrong", "Amanda"), Person("Bell", "Bert")]
-    
+
 ```
 
 . . .
@@ -487,7 +487,7 @@ def test_that_average_does_not_exceed_max(numbers):
 [-2.2250738585072014e-308, ..., 1.7976931348623155e+308] False # 11 elements
 [1.5, -0.99999, 1.401298464324817e-45, 2.2250738585072014e-308] True
 [1.9, ..., 6.103515625e-05] True
-... 
+...
 # 41 more iterations
 [1.7976931348623157e+308, 1.7976931348623157e+308] False
 [1.7976931348623157e+308] True
@@ -569,7 +569,7 @@ def triangles(draw):
 
 # Where do I find more?
 
-* hypothesis.works 
+* hypothesis.works
 * hypothesis.works/articles/quickcheck-in-every-language/
 
 -------------------------------------------
