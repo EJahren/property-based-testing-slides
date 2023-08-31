@@ -206,6 +206,14 @@ The leap year tests surprisingly kills a surprisingly large amount of mutants:
 
 -------------------------------------------------
 
+# Automating mutation testing
+
+-------------------------------------------------
+
+[](!coverage.png)
+
+-------------------------------------------------
+
 # What is Property-based testing (PBT) ?
 
 -------------------------------------------------
