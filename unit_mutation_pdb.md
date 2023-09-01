@@ -72,7 +72,7 @@ usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf
 usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf
 
 
-# Power Peg (Knights Captal Group failure)
+# Power Peg (Knights Capital Group failure)
 
 > In the week before go-live, a Knight engineer manually deployed the new RLP
 > code in SMARS to its eight servers. However, the engineer made a mistake and
