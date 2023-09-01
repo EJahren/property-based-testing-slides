@@ -52,7 +52,7 @@ READY.
 
 -------------------------------------------------
 
-> »System testing should be automated as well. A collection of executable
+> System testing should be automated as well. A collection of executable
 > programs should be produced and maintained to exercise all parts of the
 > system. The set should be open ended and maintenance utilities should be
 > included
@@ -61,8 +61,9 @@ READY.
 
 -------------------------------------------------
 
-Simple Testing Can Prevent Most Critical Failures
+Simple Testing Can Prevent Most Critical Failures:
 An Analysis of Production Failures in Distributed Data-Intensive Systems
+
 usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf
 
 -------------------------------------------------
@@ -70,6 +71,8 @@ usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf
 > A majority of the production failures (77%) can be reproduced by a unit test.
 
 usenix.org/system/files/conference/osdi14/osdi14-paper-yuan.pdf
+
+-------------------------------------------------
 
 
 # Power Peg (Knights Capital Group failure)
