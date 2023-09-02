@@ -194,6 +194,17 @@ def is_leap_year(year: int) -> bool:
 
 -------------------------------------------------
 
+
+> For tests to drive
+> development they must do more than just test that code performs its required
+> functionality: they must clearly express that required functionality to the
+> reader.
+
+Nat Pryce and Steve Freeman "Are Your Tests Really Driving Your
+Development?" (XP Day 2006 conference)
+
+-------------------------------------------------
+
 # mutation testing
 
 * Find code for which mutants are not killed
