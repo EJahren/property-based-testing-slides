@@ -151,14 +151,16 @@ def test_only_years_divisible_by_four_are_leap_years(year):
 -------------------------------------------------
 
 ```python
-    def is_leap_year(year:int) -> bool:
-        return False
+def is_leap_year(year:int) -> bool:
+    return False
 ```
 
 -------------------------------------------------
 
 
 ```python
+import pytest
+
 @pytest.mark.parametrize("year", [1908, 1914, 1918, 1940, 1998, 2004])
 def test_years_divisible_by_4_and_not_by_100_are_leap_years(year):
     assert is_leap_year(year)
@@ -176,6 +178,8 @@ def is_leap_year(year: int) -> bool:
 
 
 ```python
+import pytest
+
 @pytest.mark.parametrize("year", [1600, 1700, 1800, 1900, 2000])
 def test_years_divisible_by_100_are_not_leap_years_unless_divisible_by_400(year):
     assert not is_leap_year(year) or year % 400 == 0
@@ -202,6 +206,81 @@ def is_leap_year(year: int) -> bool:
 
 Nat Pryce and Steve Freeman "Are Your Tests Really Driving Your
 Development?" (XP Day 2006 conference)
+
+------------------------------------------------
+
+# A slight digression
+
+## Hoare logic
+
+{P}C{Q}
+
+## BDD
+
+* Given
+* When 
+* Then
+
+-------------------------------------------------
+
+# Proofs in C
+
+The following can be automatically verified by Frama-C:
+
+```c
+/*@ requires 0 <= n && \valid(a+(0..n-1));
+    assigns \nothing;
+    ensures \result == -1 ==> (\forall integer i; 0<= i < n ==> a[i] != v);
+    ensures 0 <= \result < n ==> a[\result] == v;
+    ensures -1 <= \result < n;
+ */
+int find(int n, const int a[], int v)
+{
+  int i;
+
+  /*@ loop invariant 0 <= i <= n;
+      loop invariant \forall integer j; 0 <= j < i ==> a[j] != v;
+      loop assigns i;
+      loop variant n - i; */
+  for (i=0; i < n; i++) {
+    if (a[i] == v) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+```
+
+-------------------------------------------------
+
+Built up of hoare statements:
+
+```
+\valid a+i {int e = a[i];} e == a[i]
+```
+
+connected with:
+
+```
+    p1 {c1} q , q {c2} r
+    -------------------------
+
+        p1 {c1 ; c2 } r
+```
+
+
+
+-------------------------------------------------
+
+
+```python
+def is_leap_year(year: int) -> bool:
+    return (year % 4 == 0
+      and year % 100 != 0
+      or year % 400 == 0
+    )
+```
 
 -------------------------------------------------
 
