@@ -133,7 +133,6 @@ validate(np.nan)
 
 # How do we want this to go ideally?
 
-
 > To be a leap year, the year number must be divisible by four – except for
 > years divisble by 100, unless they are also be divisible by 400.
 
@@ -148,6 +147,8 @@ validate(np.nan)
 * years divisible by 4 and not by 100 are leap years
 * years divisible 400 are leap years
 * years divisible by 100 and not divisible by 400
+
+For more, see Kevlin Henneys talk: https://youtu.be/-WWIeXmm4ec
 
 
 -------------------------------------------------
@@ -318,10 +319,6 @@ The leap year tests surprisingly kills a surprisingly large amount of mutants:
 
 -------------------------------------------------
 
-[](!coverage.png)
-
--------------------------------------------------
-
 # What is Property-based testing (PBT) ?
 
 -------------------------------------------------
@@ -383,6 +380,7 @@ done
 * AFL++
 * Shellshock
 * google/oss-fuzz (sqlite3, ffmpeg, openssl)
+* Compiler fuzzing
 
 ---------------------------------------------------
 
@@ -468,45 +466,38 @@ numbers_not_divisible_by_3_nor_5 = st.integers().filter(
 )
 ```
 
-----------------------------------------------------
-
-# Accidental coupling
+---------------------------------------------------
 
 ```python
-from dataclasses import dataclass
+from hypothesis import given
+import hypothesis.strategies as st
 
-
-@dataclass(order=True)
-class Person:
-    lastname: str
-    firstname: str
-
-
-def test_sorting():
-    assert sorted(
-        [Person("Bell", "Bert"), Person("Armstrong", "Amanda")]
-    ) == [ Person("Armstrong", "Amanda"), Person("Bell", "Bert")]
-
+@given(st.integers())
+def test_fizzbuzz_is_either_n_fizz_buzz_or_fizzbuzz(n):
+    assert fizzbuzz(n) in {str(n), "Fizz", "Buzz", "FizzBuzz"}
 ```
 
-. . .
-
-what happens if we want to change to:
+---------------------------------------------------
 
 ```python
-from enum import Enum
-from dataclasses import dataclass
+from hypothesis import given
+import hypothesis.strategies as st
 
-class Role(Enum):
-    ...
-
-@dataclass(order=True)
-class Person:
-    role: Role
-    lastname: str
-    firstname: str
+@given(numbers_divisible_by_3.filter(lambda n: n % 5 != 0))
+def test_fizzbuzz_returns_fizz(n):
+    assert fizzbuzz(n) == "Fizz"
 ```
 
+---------------------------------------------------
+
+```python
+from hypothesis import given
+import hypothesis.strategies as st
+
+@given(numbers_divisible_by_5.filter(lambda n: n % 3 != 0))
+def test_fizzbuzz_returns_buzz(n):
+    assert fizzbuzz(n) == "Buzz"
+```
 
 ---------------------------------------------------
 
@@ -515,14 +506,20 @@ class Person:
 from hypothesis import given
 import hypothesis.strategies as st
 
-from person import Person
+@given(numbers_divisible_by_15)
+def test_fizzbuzz_returns_fizzbuzz(n):
+    assert fizzbuzz(n) == "FizzBuzz"
+```
 
-persons = st.builds(Person)
-orderables = st.one_of(persons, st.integers())
+---------------------------------------------------
 
-@given(st.lists(elements=orderables))
-def test_sorting_orders(list):
-    ...
+```python
+from hypothesis import given
+import hypothesis.strategies as st
+
+@given(numbers_not_divisible_by_3_nor_5)
+def test_fizzbuzz_returns_number(n):
+    assert fizzbuzz(n) == str(n)
 ```
 
 ---------------------------------------------------
@@ -532,16 +529,12 @@ def test_sorting_orders(list):
 
 ```python
 import yaml
-from io import StringIO
 from hypothesis import given
 import hypothesis.strategies as st
 
 @given(st.dictionaries(keys=st.text(), values=st.text()))
-def test_reading_and_writing_yaml_are_inverses(data):
-    buffer = StringIO()
-    yaml.dump(data, buffer)
-    buffer.seek(0)
-    assert yaml.load(buffer) == data
+def test_reading_and_writing_yaml_are_left_inverse(data):
+    assert yaml.load(yaml.dump(data)) == data
 
 ```
 -----------------------------------------------------------------
