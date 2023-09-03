@@ -241,8 +241,6 @@ def test_reading_and_writing_yaml_are_inverses(data):
 
 Recall our sorting properties:
 
-
-
 ```python
 from hypothesis import given
 import hypothesis.strategies as st

@@ -137,6 +137,18 @@ validate(np.nan)
 > To be a leap year, the year number must be divisible by four – except for
 > years divisble by 100, unless they are also be divisible by 400.
 
+-------------------------------------------------
+
+# lets be specific
+
+* A year is just a whole number
+* There are leap years and non-leap years (sometimes called normal years)
+
+* years not divisible by 4 are non-leap years
+* years divisible by 4 and not by 100 are leap years
+* years divisible 400 are leap years
+* years divisible by 100 and not divisible by 400
+
 
 -------------------------------------------------
 
@@ -144,7 +156,7 @@ validate(np.nan)
 import pytest
 
 @pytest.mark.parametrize("year", [1939, 1945, 1997, 1999])
-def test_only_years_divisible_by_four_are_leap_years(year):
+def test_years_divisible_by_four_are_leap_years(year):
     assert not is_leap_year(year)
 ```
 
@@ -180,9 +192,13 @@ def is_leap_year(year: int) -> bool:
 ```python
 import pytest
 
-@pytest.mark.parametrize("year", [1600, 1700, 1800, 1900, 2000])
-def test_years_divisible_by_100_are_not_leap_years_unless_divisible_by_400(year):
-    assert not is_leap_year(year) or year % 400 == 0
+@pytest.mark.parametrize("year", [1700, 1800, 1900, 2100, 2200, 2300])
+def test_years_divisible_by_100_and_not_by_400_are_leap_years(year):
+    assert not is_leap_year(year)
+
+@pytest.mark.parametrize("year", [1600, 2000,2400])
+def test_years_divisible_by_400_are_leap_years(year):
+    assert is_leap_year(year)
 
 ```
 
@@ -199,10 +215,9 @@ def is_leap_year(year: int) -> bool:
 -------------------------------------------------
 
 
-> For tests to drive
-> development they must do more than just test that code performs its required
-> functionality: they must clearly express that required functionality to the
-> reader.
+> For tests to drive development they must do more than just test that code
+> performs its required functionality: they must clearly express that required
+> functionality to the reader.
 
 Nat Pryce and Steve Freeman "Are Your Tests Really Driving Your
 Development?" (XP Day 2006 conference)
@@ -217,9 +232,9 @@ Development?" (XP Day 2006 conference)
 
 ## BDD
 
-* Given
-* When 
-* Then
+* Given / Arrange
+* When  / Act
+* Then  / Assert
 
 -------------------------------------------------
 
