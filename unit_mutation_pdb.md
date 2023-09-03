@@ -401,7 +401,7 @@ def test_sum_is_commutative(a, b):
 
 ---------------------------------------------------
 
-# Another Example: Sorting is permuting
+# Sorting is permuting
 
 
 ```python
@@ -409,7 +409,7 @@ from hypothesis import given
 import hypothesis.strategies as st
 
 @given(st.lists(elements=st.integers()))
-def test_sorting_results_in_permutation(lst):
+def test_sorting_results_in_a_permutation(lst):
     sorted_list = sorted(lst)
     for element in lst:
         assert element in sorted_list
@@ -419,7 +419,7 @@ def test_sorting_results_in_permutation(lst):
 
 ---------------------------------------------------
 
-# Example 3: Sorting orders
+# Sorting orders
 
 
 ```python
@@ -434,14 +434,38 @@ def test_sorting_orders(lst):
 ```
 ----------------------------------------------------
 
-# Lets compare with a unit test
+# Fizzbuzz
 
 ```python
-def test_sorting():
-    assert sorted([]) == []
-    assert sorted([1]) == [1]
-    assert sorted([1,3,2]) == [1, 2, 3]
-    assert sorted(['b','b','b','a']) == ['a', 'b', 'b', 'b']
+def fizzbuzz(n: int) -> str:
+    return "Fizz" * (n % 3 == 0) + "Buzz" * (n % 5 == 0) or str(n)
+```
+
+----------------------------------------------------
+
+```python
+import hypothesis.strategies as st
+
+numbers_divisible_by_3 = st.integers().filter(lambda n: n % 3 == 0)
+numbers_divisible_by_5 = st.integers().filter(lambda n: n % 5 == 0)
+numbers_divisible_by_15 = st.integers().filter(lambda n: n % 15 == 0)
+numbers_not_divisible_by_3_nor_5 = st.integers().filter(
+    lambda n: n % 3 != 0 and n % 5 != 0
+)
+```
+
+
+----------------------------------------------------
+
+```python
+import hypothesis.strategies as st
+
+numbers_divisible_by_3 = st.integers().map(lambda n: n * 3)
+numbers_divisible_by_5 = st.integers().map(lambda n: n * 5)
+numbers_divisible_by_15 = st.integers().map(lambda n: n * 15)
+numbers_not_divisible_by_3_nor_5 = st.integers().filter(
+    lambda n: n % 3 != 0 and n % 5 != 0
+)
 ```
 
 ----------------------------------------------------

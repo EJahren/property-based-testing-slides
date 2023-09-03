@@ -116,7 +116,7 @@ from hypothesis import given
 import hypothesis.strategies as st
 
 @given(st.lists(elements=st.integers()))
-def test_sorting_results_in_permutation(list):
+def test_sorting_results_in_a_permutation(list):
     sorted_list = sorted(list)
     for element in list:
         assert element in sorted_list
