@@ -131,6 +131,15 @@ validate(np.nan)
 
 -------------------------------------------------
 
+
+> Test Early. Test Often. Test Automatically
+
+- "The pragmatic programmer" - Andrew Hunt & David Thomas
+
+
+
+-------------------------------------------------
+
 # How do we want this to go ideally?
 
 > To be a leap year, the year number must be divisible by four – except for
