@@ -140,10 +140,38 @@ validate(np.nan)
 
 -------------------------------------------------
 
-# How do we want this to go ideally?
+# The custodians of detail
+
+```python
+
+def gassman_equation(
+        dry_bulk_modulus, mineral_bulk_modulus, fluid_bulk_modulus, porosity
+    ):
+    # Avseth et al.,"Quantitative Seismic Interpretation", page 17:
+    difference_factor = dry_bulk_modulus / (
+        mineral_bulk_modulus - dry_bulk_modulus
+    ) + fluid_bulk_modulus / (
+        (mineral_bulk_modulus - fluid_bulk_modulus) * porosity
+    )
+
+    if difference_factor < 0:
+        raise ValueError("moduli of materials are unsuitable for fluid substitution")
+
+    return difference_factor / (1 + difference_factor) * mineral_bulk_modulus
+
+```
+
+
+-------------------------------------------------
+
+
+# Lets do something simpler
 
 > To be a leap year, the year number must be divisible by four – except for
 > years divisble by 100, unless they are also be divisible by 400.
+
+
+(Example from Kevlin Henney)
 
 -------------------------------------------------
 
@@ -447,6 +475,8 @@ def test_sorting_orders(lst):
 def fizzbuzz(n: int) -> str:
     return "Fizz" * (n % 3 == 0) + "Buzz" * (n % 5 == 0) or str(n)
 ```
+
+(https://medium.com/codex/one-line-fizzbuzz-solution-in-python-3-9aff0cd98a69)
 
 ----------------------------------------------------
 
