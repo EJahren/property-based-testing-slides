@@ -149,7 +149,7 @@ validate(np.nan)
 -------------------------------------------------
 
 
-> Test Early. Test Often. Test Automatically
+> Test Early. Test Often. Test Automatically.
 
 - "The pragmatic programmer" - Andrew Hunt & David Thomas
 
