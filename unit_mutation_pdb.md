@@ -22,7 +22,7 @@ READY.
 
 # Agenda
 
-* Getting back to our roots
+* Famous bugs
 * Coverage and mutation testing
 * Some background on PBD
 * Using Hypothesis
