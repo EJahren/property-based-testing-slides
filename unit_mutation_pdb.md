@@ -188,7 +188,7 @@ def gassman_equation(
 > years divisble by 100, unless they are also be divisible by 400.
 
 
-(Example from Kevlin Henney)
+For more, see Kevlin Henneys talk: https://youtu.be/-WWIeXmm4ec
 
 -------------------------------------------------
 
@@ -202,8 +202,14 @@ def gassman_equation(
 * years divisible 400 are leap years
 * years divisible by 100 and not divisible by 400
 
-For more, see Kevlin Henneys talk: https://youtu.be/-WWIeXmm4ec
+-------------------------------------------------
 
+> "When I use a word," Humpty Dumpty said in rather a scornful tone, "it means
+> just what I choose it to mean — neither more nor less."
+> "The question is," said Alice, "whether you can make words mean so many
+> different things."
+
+Lewis Carroll - Alice in Wonderland
 
 -------------------------------------------------
 
@@ -269,13 +275,14 @@ def is_leap_year(year: int) -> bool:
 
 -------------------------------------------------
 
+> “Would you tell me, please, which way I ought to go from here?”
+> “That depends a good deal on where you want to get to,” said the Cat.
+> “I don’t much care where–” said Alice.
+> “Then it doesn’t matter which way you go,” said the Cat.
+> “–so long as I get SOMEWHERE,” Alice added as an explanation.
+> “Oh, you’re sure to do that,” said the Cat, “if you only walk long enough.”
 
-> For tests to drive development they must do more than just test that code
-> performs its required functionality: they must clearly express that required
-> functionality to the reader.
-
-Nat Pryce and Steve Freeman "Are Your Tests Really Driving Your
-Development?" (XP Day 2006 conference)
+lewis Carroll - Alice in Wonderland
 
 ------------------------------------------------
 
