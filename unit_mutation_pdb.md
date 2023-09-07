@@ -131,6 +131,23 @@ validate(np.nan)
 
 -------------------------------------------------
 
+```python
+
+import numpy as np
+
+def validate(a):
+    if a < 0:
+        raise ValueError()
+    if a > 1:
+        raise ValueError()
+
+    assert a >= 0 and a <= 1
+
+validate(np.nan)
+```
+
+-------------------------------------------------
+
 
 > Test Early. Test Often. Test Automatically
 
