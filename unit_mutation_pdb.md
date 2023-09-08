@@ -40,7 +40,7 @@ READY.
 
 -------------------------------------------------
 
-> The manufacturer said that the hardward
+> The manufacturer said that the hardware
 > and software were "tested and exercised separately or
 > together for many years \[...\] A "small amount" of
 > software testing was done on a simulator, but most
@@ -185,7 +185,7 @@ def gassman_equation(
 # Lets do something simpler
 
 > To be a leap year, the year number must be divisible by four – except for
-> years divisble by 100, unless they are also be divisible by 400.
+> years divisible by 100, unless they are also be divisible by 400.
 
 
 For more, see Kevlin Henneys talk: https://youtu.be/-WWIeXmm4ec
@@ -273,17 +273,6 @@ def is_leap_year(year: int) -> bool:
     )
 ```
 
--------------------------------------------------
-
-> “Would you tell me, please, which way I ought to go from here?”
-> “That depends a good deal on where you want to get to,” said the Cat.
-> “I don’t much care where–” said Alice.
-> “Then it doesn’t matter which way you go,” said the Cat.
-> “–so long as I get SOMEWHERE,” Alice added as an explanation.
-> “Oh, you’re sure to do that,” said the Cat, “if you only walk long enough.”
-
-lewis Carroll - Alice in Wonderland
-
 ------------------------------------------------
 
 # A slight digression
@@ -368,7 +357,7 @@ def is_leap_year(year: int) -> bool:
 
 -------------------------------------------------
 
-The leap year tests surprisingly kills a surprisingly large amount of mutants:
+The leap year tests kills a surprisingly large amount of mutants:
 
 * `year % 4 == 0 and year % 231 != 0 or year % 400 == 0`
 * `year % 4 == 0 or year % 100 != 0 and year % 400 == 0`
@@ -546,6 +535,8 @@ def test_fizzbuzz_is_either_n_fizz_buzz_or_fizzbuzz(n):
 from hypothesis import given
 import hypothesis.strategies as st
 
+numbers_divisible_by_3 = st.integers().map(lambda n: n * 3)
+
 @given(numbers_divisible_by_3.filter(lambda n: n % 5 != 0))
 def test_fizzbuzz_returns_fizz(n):
     assert fizzbuzz(n) == "Fizz"
@@ -556,6 +547,8 @@ def test_fizzbuzz_returns_fizz(n):
 ```python
 from hypothesis import given
 import hypothesis.strategies as st
+
+numbers_divisible_by_5 = st.integers().map(lambda n: n * 5)
 
 @given(numbers_divisible_by_5.filter(lambda n: n % 3 != 0))
 def test_fizzbuzz_returns_buzz(n):
@@ -569,6 +562,8 @@ def test_fizzbuzz_returns_buzz(n):
 from hypothesis import given
 import hypothesis.strategies as st
 
+numbers_divisible_by_15 = st.integers().map(lambda n: n * 15)
+
 @given(numbers_divisible_by_15)
 def test_fizzbuzz_returns_fizzbuzz(n):
     assert fizzbuzz(n) == "FizzBuzz"
@@ -579,6 +574,10 @@ def test_fizzbuzz_returns_fizzbuzz(n):
 ```python
 from hypothesis import given
 import hypothesis.strategies as st
+
+numbers_not_divisible_by_3_nor_5 = st.integers().filter(
+    lambda n: n % 3 != 0 and n % 5 != 0
+)
 
 @given(numbers_not_divisible_by_3_nor_5)
 def test_fizzbuzz_returns_number(n):
@@ -605,7 +604,6 @@ def test_reading_and_writing_yaml_are_left_inverse(data):
 * Functions f and g are right-inverse if for all x:A . f(g(x)) = x
 * Functions f and g are left-inverse if for all x:A . g(f(x)) = x
 * f and g are inverse if they are both right-inverse and left-inverse.
-* yaml.dump and yaml.load are inverse functions.
 
 ---------------------------------------------------------------
 
@@ -639,6 +637,9 @@ def test_that_average_does_not_exceed_max(numbers):
 ----------------------------------------------------
 
 ```python
+from hypothesis import given
+import hypothesis.strategies as st
+
 @given(st.lists(st.floats(), min_size=1))
 def test_that_average_does_not_exceed_max(numbers):
     assert max(numbers) >= average(numbers)
@@ -647,6 +648,9 @@ def test_that_average_does_not_exceed_max(numbers):
 -----------------------------------------------------
 
 ```python
+from hypothesis import given
+import hypothesis.strategies as st
+
 @given(st.lists(st.floats(allow_nan=False, allow_infinity=False), min_size=1))
 def test_that_average_does_not_exceed_max(numbers):
     assert max(numbers) >= average(numbers)
@@ -702,7 +706,7 @@ def test_that_average_does_not_exceed_max(numbers):
 
 -------------------------------------------------------------
 
-# But what if what I am trying to generate is complicated?
+# But what if the thing I am trying to generate is complicated?
 
 . . .
 
