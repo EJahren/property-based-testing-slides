@@ -603,7 +603,7 @@ def test_reading_and_writing_yaml_are_left_inverse(data):
 
 * Functions f and g are right-inverse if for all x:A . f(g(x)) = x
 * Functions f and g are left-inverse if for all x:A . g(f(x)) = x
-* f and g are inverse if they are both right-inverse and left-inverse.
+* f and g are inverse if they are  left-inverse.
 
 ---------------------------------------------------------------
 
@@ -674,8 +674,9 @@ import hypothesis.strategies as st
 
 @given(st.lists(st.floats(allow_nan=False, allow_infinity=False), min_size=1))
 def test_that_average_does_not_exceed_max(numbers):
+    success = max(numbers) >= average(numbers)
     print(numbers, success)
-    assert max(numbers) >= average(numbers)
+    assert success
 ```
 
 ------------------------------------------------------

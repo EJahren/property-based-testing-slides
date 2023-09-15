@@ -232,7 +232,7 @@ def test_reading_and_writing_yaml_are_inverses(data):
 * Functions f and g are right-inverse if for all x:A . f(g(x)) = x
 * Functions f and g are left-inverse if for all x:A . g(f(x)) = x
 * f and g are inverse if they are both right-inverse and left-inverse.
-* yaml.dump and yaml.load are inverse functions.
+* yaml.dump and yaml.load are left-inverse functions.
 
 ---------------------------------------------------------------
 
