@@ -1,10 +1,14 @@
 Property-based testing slides
 =============================
 
-These are my slides for talks given related to Property-based testing. It
-currently uses [patat](https://github.com/jaspervdj/patat) to present these,
-although that has not always been the case. The slides are written in .md format,
-but not all may have been optimized for usage for patat, beware here be dragons!
+These are my slides for talks given related to Property-based testing.
+
+
+
+
+The [current version of the slides](slides.md) uses
+[patat](https://github.com/jaspervdj/patat) and markdown format.
+
 
 Running
 -------
